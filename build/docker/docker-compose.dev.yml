@@ -1,0 +1,43 @@
+version: '3.6'
+
+name: gym-docker
+
+services:
+  # Контейнер с базой данных
+  db:
+    image: postgres:12-alpine
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - ../../data/postgres:/var/lib/postgresql/data
+    expose:
+      - '5432'
+    restart: always
+
+  # Контейнер с nginx
+  nginx:
+    container_name: proxy_nginx
+    depends_on:
+      - db
+      - pgadmin
+    image: nginx:latest
+    ports:
+      - '7092:7092'
+    volumes:
+      - ../../config/nginx:/etc/nginx/conf.d
+      - ../../public:/var/www/public
+    restart: always
+
+  # Контейнер с pgadmin
+  pgadmin:
+    container_name: pgadmin
+    depends_on:
+      - db
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: fognir742@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: 123456789
+    expose:
+      - '80'
+    restart: always
