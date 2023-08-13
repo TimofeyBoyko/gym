@@ -1,14 +1,14 @@
-import { Entity, PrimaryColumn, JoinColumn, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, JoinColumn, OneToOne } from 'typeorm';
 import { UserEntity } from './user.entity';
 
 @Entity('ward')
 export class WardEntity {
-  @PrimaryColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @OneToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })
-  userId: string;
+  userId: number;
 
   @OneToOne(() => UserEntity)
   @JoinColumn({ name: 'coach_id' })

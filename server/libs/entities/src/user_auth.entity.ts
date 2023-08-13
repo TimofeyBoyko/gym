@@ -1,14 +1,20 @@
-import { Entity, PrimaryColumn, JoinColumn, Column, OneToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+  Column,
+  OneToOne,
+} from 'typeorm';
 import { UserEntity } from './user.entity';
 
 @Entity('user_auth')
 export class UserAuthEntity {
-  @PrimaryColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @OneToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })
-  userId: string;
+  userId: number;
 
   @Column({ name: 'password_hash' })
   passwordHash: string;

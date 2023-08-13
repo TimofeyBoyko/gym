@@ -1,14 +1,20 @@
-import { Entity, PrimaryColumn, Column, JoinColumn, OneToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  JoinColumn,
+  OneToOne,
+} from 'typeorm';
 import { UserEntity } from './user.entity';
 
 @Entity('news')
 export class NewsEntity {
-  @PrimaryColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @OneToOne(() => UserEntity)
   @JoinColumn({ name: 'author_id' })
-  authorId: string;
+  authorId: number;
 
   @Column()
   text: string;

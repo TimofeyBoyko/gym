@@ -1,15 +1,21 @@
-import { Entity, PrimaryColumn, Column, JoinColumn, OneToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  JoinColumn,
+  OneToOne,
+} from 'typeorm';
 import { UserEntity } from './user.entity';
 import { NutritionStatus } from '../../enums/src';
 
 @Entity('nutrition')
 export class NutritionEntity {
-  @PrimaryColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @OneToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })
-  userId: string;
+  userId: number;
 
   @Column()
   data: string;
