@@ -3,6 +3,16 @@ import { join } from 'path';
 
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
+import {
+  NewsEntity,
+  NutritionEntity,
+  TrainingEntity,
+  UserAuthEntity,
+  UserEntity,
+  UserPaymentsEntity,
+  UserSettingsEntity,
+  WardEntity,
+} from '@app/entities';
 
 config({
   path: join(process.cwd(), '..', 'build', 'docker', '.env'),
@@ -21,19 +31,25 @@ const options = (): DataSourceOptions => {
     schema: 'public',
     logging: configService.get('NODE_ENV') === 'dev',
     entities: [
-      join(process.cwd(), 'dist', 'libs', 'entities', '**', '*.entity.{ts,js}'),
+      // join(process.cwd(), 'dist', 'libs', 'entities', '**', '*.entity.{ts,js}'),
+      UserEntity,
+      UserAuthEntity,
+      UserPaymentsEntity,
+      UserSettingsEntity,
+      TrainingEntity,
+      NutritionEntity,
+      WardEntity,
+      NewsEntity,
     ],
-    migrations: [join(process.cwd(), 'migrations', '*migration.ts')],
-    migrationsRun: true,
-    migrationsTableName: 'migrations',
+    // migrations: [join(process.cwd(), 'migrations', '*migration.ts')],
+    // migrationsRun: true,
+    // migrationsTableName: 'migrations',
     port: dbPort,
     username: dbUser,
     password: dbPassword,
     database: dbName,
-    synchronize: false,
+    synchronize: true,
   };
 };
-
-console.log(options());
 
 export const appDataSource = new DataSource(options());
