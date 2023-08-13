@@ -11,7 +11,7 @@ import { Theme } from '../../enums/src';
 @Entity('user_settings')
 export class UserSettingsEntity {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @OneToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })
