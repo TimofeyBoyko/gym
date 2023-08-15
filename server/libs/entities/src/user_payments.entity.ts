@@ -5,26 +5,27 @@ import {
   Column,
   OneToOne,
 } from 'typeorm';
+
 import { UserEntity } from './user.entity';
 
 @Entity('user_payments')
 export class UserPaymentsEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @OneToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })
-  userId: number;
+  userId: string;
 
   @OneToOne(() => UserEntity)
   @JoinColumn({ name: 'manager_id' })
-  managerId: number;
+  managerId: string;
 
   @Column({ name: 'start_date' })
-  startDate: number;
+  startDate: string;
 
   @Column({ name: 'end_date' })
-  endDate: number;
+  endDate: string;
 
   @Column({ name: 'card_number', unique: true })
   cardNumber: number;

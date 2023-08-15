@@ -5,16 +5,17 @@ import {
   Column,
   OneToOne,
 } from 'typeorm';
+
 import { UserEntity } from './user.entity';
 
 @Entity('user_auth')
 export class UserAuthEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @OneToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })
-  userId: number;
+  userId: string;
 
   @Column({ name: 'password_hash' })
   passwordHash: string;

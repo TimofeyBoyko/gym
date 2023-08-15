@@ -5,17 +5,19 @@ import {
   JoinColumn,
   OneToOne,
 } from 'typeorm';
+
+import { TrainingStatus } from '@app/shared/enums';
+
 import { UserEntity } from './user.entity';
-import { TrainingStatus } from '../../enums/src';
 
 @Entity('training')
 export class TrainingEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @OneToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })
-  userId: number;
+  userId: string;
 
   @Column()
   data: string;

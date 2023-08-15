@@ -1,8 +1,5 @@
-import { config } from 'dotenv';
-import { join } from 'path';
-
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { ConfigService } from '@nestjs/config';
+
 import {
   NewsEntity,
   NutritionEntity,
@@ -14,21 +11,19 @@ import {
   WardEntity,
 } from '@app/entities';
 
-config({
-  path: join(process.cwd(), '..', 'build', 'docker', '.env'),
-});
-
-const configService = new ConfigService();
+import { configService } from './config.service';
 
 const options = (): DataSourceOptions => {
   const dbName = configService.get('DB_NAME');
   const dbUser = configService.get('DB_USER');
   const dbPassword = configService.get('DB_PASSWORD');
   const dbPort = configService.get('DB_PORT');
+  const dbHost = configService.get('DB_HOST');
 
   return {
     type: 'postgres',
     schema: 'public',
+    // url: dbURI,
     logging: configService.get('NODE_ENV') === 'dev',
     entities: [
       // join(process.cwd(), 'dist', 'libs', 'entities', '**', '*.entity.{ts,js}'),
@@ -48,6 +43,7 @@ const options = (): DataSourceOptions => {
     username: dbUser,
     password: dbPassword,
     database: dbName,
+    host: dbHost,
     synchronize: true,
   };
 };

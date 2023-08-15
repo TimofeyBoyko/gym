@@ -1,10 +1,11 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { UserActivationStatus, UserStatus, UserType } from '../../enums/src';
+
+import { UserActivationStatus, UserStatus, UserType } from '@app/shared/enums';
 
 @Entity('user')
 export class UserEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ name: 'first_name' })
   firstName: string;

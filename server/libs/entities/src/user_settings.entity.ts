@@ -5,17 +5,19 @@ import {
   Column,
   OneToOne,
 } from 'typeorm';
+
+import { Theme } from '@app/shared/enums';
+
 import { UserEntity } from './user.entity';
-import { Theme } from '../../enums/src';
 
 @Entity('user_settings')
 export class UserSettingsEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @OneToOne(() => UserEntity)
   @JoinColumn({ name: 'user_id' })
-  userId: number;
+  userId: string;
 
   @Column({ type: 'enum', enum: Theme, default: Theme.Base })
   theme: Theme;

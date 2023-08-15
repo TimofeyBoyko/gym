@@ -5,16 +5,17 @@ import {
   JoinColumn,
   OneToOne,
 } from 'typeorm';
+
 import { UserEntity } from './user.entity';
 
 @Entity('news')
 export class NewsEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @OneToOne(() => UserEntity)
   @JoinColumn({ name: 'author_id' })
-  authorId: number;
+  authorId: string;
 
   @Column()
   text: string;
