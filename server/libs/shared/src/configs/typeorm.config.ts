@@ -11,7 +11,7 @@ import {
   WardEntity,
 } from '@app/entities';
 
-import { configService } from './config.service';
+import { configService } from '../services';
 
 const options = (): DataSourceOptions => {
   const dbName = configService.get('DB_NAME');

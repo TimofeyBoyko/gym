@@ -12,11 +12,16 @@ export class UserAuthRepository {
   ) {}
 
   async get(userId: string): Promise<UserAuthEntity> {
-    const userAuth: UserAuthEntity = await this.userAuthRepository.findOneBy({
-      userId,
-    });
+    try {
+      const userAuth: UserAuthEntity = await this.userAuthRepository
+        .createQueryBuilder('auth')
+        .where('auth.userId = :userId', { userId })
+        .getOne();
 
-    return userAuth;
+      return userAuth;
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   create(): UserAuthEntity {
