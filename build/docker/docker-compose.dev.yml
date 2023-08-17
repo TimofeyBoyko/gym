@@ -10,6 +10,7 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
+      - DB_EXTENSION="uuid-ossp"
     volumes:
       - ../../data/postgres:/var/lib/postgresql/data
     ports:
@@ -18,12 +19,54 @@ services:
       - '5432'
     restart: always
 
+  #Контейнер с auth
+  auth:
+    build: 
+      context: ../../server
+      dockerfile: apps/auth/Dockerfile
+    ports:
+      - "6004:6004"
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+      - db
+    volumes:
+      - ../../server:/user/src/app
+      - /app/node_modules
+      - /user/src/app/node_modules
+    restart: always
+    working_dir: /user/src/app
+    command: yarn start:dev auth
+
+  #Контейнер с user
+  user:
+    build: 
+      context: ../../server
+      dockerfile: apps/user/Dockerfile
+    ports:
+      - "6005:6005"
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+      - db
+    volumes:
+      - ../../server:/user/src/app
+      - /app/node_modules
+      - /user/src/app/node_modules
+    restart: always
+    working_dir: /user/src/app
+    command: yarn start:dev user
+
   # Контейнер с nginx
   nginx:
     container_name: proxy_nginx
     depends_on:
       - db
       - pgadmin
+      - auth
+      - user
     image: nginx:latest
     ports:
       - '7092:7092'
@@ -44,3 +87,20 @@ services:
     expose:
       - '80'
     restart: always
+
+  #Контейнер с rabbitMQ
+  rabbitmq:
+    image: rabbitmq:3.9-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    restart: always
+    volumes:
+      - ../../data/rabbitmq:/var/lib/rabbitmq
+    ports:
+      - 15672:15672
+      - 5672:5672
+    env_file:
+      - .env
+
+
+    
