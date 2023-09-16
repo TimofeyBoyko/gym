@@ -74,11 +74,41 @@ export class AuthService {
     return hashPassword;
   }
 
-  login(userId: string): { access_token: string } {
-    const payload = { id: userId };
+  async login(
+    email: string,
+    password: string,
+  ): Promise<{ access_token: string }> {
+    const user = await this.validateUser(email, password);
+
+    const payload = { id: user.id };
 
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  async registration(
+    email: string,
+    password: string,
+    dto: RegistrationDto,
+  ): Promise<void> {
+    try {
+      await this.checkEmail(email);
+
+      const userInfo = await this.createUser(dto);
+
+      const { id } = await this.userRepository.save(userInfo);
+
+      const hashPassword = await this.generateHashPassword(password);
+
+      const auth = this.userAuthRepository.create();
+
+      auth.userId = id;
+      auth.passwordHash = hashPassword;
+
+      await this.userAuthRepository.save(auth);
+    } catch (e) {
+      throw new Error(e);
+    }
   }
 }

@@ -3,13 +3,11 @@ import {
   Controller,
   HttpException,
   HttpStatus,
-  Inject,
   Post,
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { UserAuthRepository, UserRepository } from '@app/shared/repositories';
 import {
   USER_ALREADY_EXISTS,
   USER_NOT_FOUND,
@@ -23,11 +21,7 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Auth')
 @Controller()
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    @Inject(UserRepository) private userRepository: UserRepository,
-    @Inject(UserAuthRepository) private userAuthRepository: UserAuthRepository,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   //TODO: return token and reserve email for time
   @Post('checkemail')
@@ -54,9 +48,7 @@ export class AuthController {
     const { email, password } = loginDto;
 
     try {
-      const user = await this.authService.validateUser(email, password);
-
-      return this.authService.login(user.id);
+      return this.authService.login(email, password);
     } catch (e) {
       switch (e.message) {
         case 'NotFound':
@@ -88,7 +80,9 @@ export class AuthController {
     const { email, password } = registrationDto;
 
     try {
-      await this.authService.checkEmail(email);
+      await this.authService.registration(email, password, registrationDto);
+
+      res.status(HttpStatus.CREATED).send();
     } catch (e) {
       throw new HttpException(
         {
@@ -98,20 +92,5 @@ export class AuthController {
         HttpStatus.CONFLICT,
       );
     }
-
-    const userInfo = await this.authService.createUser(registrationDto);
-
-    const { id } = await this.userRepository.save(userInfo);
-
-    const hashPassword = await this.authService.generateHashPassword(password);
-
-    const auth = this.userAuthRepository.create();
-
-    auth.userId = id;
-    auth.passwordHash = hashPassword;
-
-    await this.userAuthRepository.save(auth);
-
-    res.status(HttpStatus.CREATED).send();
   }
 }

@@ -1,33 +1,68 @@
-import { Controller, Get, Inject, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpStatus,
+  Put,
+  Req,
+  Body,
+  Res,
+} from '@nestjs/common';
+import { Request, Response } from 'express';
 
-import { UserAuthRepository, UserRepository } from '@app/shared/repositories';
+import { UserEntity } from '@app/entities';
+import { getUserId } from '@app/shared/utils';
+import { UserType } from '@app/shared/enums';
 
 import { UserService } from './user.service';
-import { UserAuthEntity, UserEntity } from '@app/entities';
+
+import { handleError } from './utils';
 
 @Controller()
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    @Inject(UserRepository) private userRepository: UserRepository,
-    @Inject(UserAuthRepository) private userAuthRepository: UserAuthRepository,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get('@self')
-  async getHello(): Promise<UserAuthEntity[]> {
+  async getSelf(@Req() req: Request): Promise<UserEntity> {
+    const userId = getUserId(req);
+
     try {
-      const users = await this.userAuthRepository.get(
-        '5307ee44-75e6-4e4d-8416-278c41ffb57b',
-      );
-
-      return users;
+      return this.userService.getSelf(userId);
     } catch (e) {
-      console.log(e);
+      handleError(e);
     }
+  }
 
-    // throw new BadRequestException('Something bad happened', {
-    //   cause: new Error(),
-    //   description: 'Some error description',
-    // });
+  @Put('/change/type')
+  async changeType(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() newType: UserType,
+  ) {
+    const userId = getUserId(req);
+
+    try {
+      await this.userService.changeType(userId, newType);
+
+      res.status(HttpStatus.OK).send();
+    } catch (e) {
+      handleError(e);
+    }
+  }
+
+  @Put('/change/status')
+  async changeStatus(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() newType: UserType,
+  ) {
+    const userId = getUserId(req);
+
+    try {
+      await this.userService.changeType(userId, newType);
+
+      res.status(HttpStatus.OK).send();
+    } catch (e) {
+      handleError(e);
+    }
   }
 }
